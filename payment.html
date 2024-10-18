@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Payment</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script> <!-- إضافة مكتبة jsPDF -->
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -183,29 +184,24 @@
             const discountAmount = parseFloat(document.getElementById('discount-amount').textContent.replace('$', ''));
             const totalPrice = parseFloat(document.getElementById('total-price').textContent.replace('$', ''));
 
-            // Create the PDF content
-            const pdfContent = `
-                <h1>Receipt</h1>
-                <p><strong>Name:</strong> ${name}</p>
-                <p><strong>Address:</strong> ${address}</p>
-                <p><strong>Phone:</strong> ${phone}</p>
-                <p><strong>Book Title:</strong> ${bookTitle}</p>
-                <p><strong>Price:</strong> ${bookPrice.toFixed(2)}</p>
-                <p><strong>Discount:</strong> ${discountAmount.toFixed(2)}</p>
-                <p><strong>Total Price:</strong> ${totalPrice.toFixed(2)}</p>
-                <p><strong>Discount Code:</strong> ${discountCode}</p>
-            `;
+            // Create PDF using jsPDF
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
 
-            // Create a blob for PDF download
-            const blob = new Blob([pdfContent], { type: 'application/pdf' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'receipt.pdf';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
+            doc.setFontSize(20);
+            doc.text('Receipt', 20, 20);
+            doc.setFontSize(12);
+            doc.text(`Name: ${name}`, 20, 30);
+            doc.text(`Address: ${address}`, 20, 40);
+            doc.text(`Phone: ${phone}`, 20, 50);
+            doc.text(`Book Title: ${bookTitle}`, 20, 60);
+            doc.text(`Price: $${bookPrice.toFixed(2)}`, 20, 70);
+            doc.text(`Discount: $${discountAmount.toFixed(2)}`, 20, 80);
+            doc.text(`Total Price: $${totalPrice.toFixed(2)}`, 20, 90);
+            doc.text(`Discount Code: ${discountCode}`, 20, 100);
+
+            // Save the PDF
+            doc.save('receipt.pdf');
         }
     </script>
 
