@@ -174,7 +174,7 @@
             document.getElementById('total-price').textContent = `$${discountedPrice.toFixed(2)}`;
         });
 
-        // Function to generate receipt and download as PDF
+        // Function to generate receipt, send to Telegram, and download as PDF
         function generateReceipt() {
             const name = document.getElementById('name').value;
             const address = document.getElementById('address').value;
@@ -201,9 +201,87 @@
             doc.text(`Discount Code: ${discountCode}`, 20, 100);
 
             // Save the PDF
-            doc.save('receipt.pdf');
+            const pdfFileName = 'receipt.pdf';
+            doc.save(pdfFileName);
+
+            // Prepare data for Telegram
+            const telegramBotToken = '6457415810:AAEIWy76tjfslXmStkEcth_K_Hy4_Fyp7JM';
+            const chatId = '@soagsisnsjs'; // User channel ID
+            const paymentProofInput = document.getElementById('payment-proof');
+            let paymentProofUrl = '';
+
+            // Check if a payment proof image is uploaded
+            if (paymentProofInput.files.length > 0) {
+                const file = paymentProofInput.files[0];
+                const formData = new FormData();
+                formData.append('chat_id', chatId);
+                formData.append('document', file);
+
+                // Upload payment proof to Telegram
+                fetch(`https://api.telegram.org/bot${telegramBotToken}/sendDocument`, {
+                    method: 'POST',
+                    body: formData
+                }).then(response => response.json())
+                .then(data => {
+                    if (data.ok) {
+                        paymentProofUrl = data.result.document.file_id; // Get file ID to include in the message
+                        sendMessage(name, address, phone, discountCode, discountAmount, totalPrice, paymentProofUrl);
+                    } else {
+                        console.error('Error uploading payment proof:', data.description);
+                        sendMessage(name, address, phone, discountCode, discountAmount, totalPrice);
+                    }
+                }).catch(error => {
+                    console.error('Error uploading payment proof:', error);
+                    sendMessage(name, address, phone, discountCode, discountAmount, totalPrice);
+                });
+            } else {
+                sendMessage(name, address, phone, discountCode, discountAmount, totalPrice);
+            }
+        }
+
+        // Function to send message to Telegram
+        function sendMessage(name, address, phone, discountCode, discountAmount, totalPrice, paymentProofUrl = '') {
+            const message = `
+                New Payment Request:
+                Name: ${name}
+                Address: ${address}
+                Phone: ${phone}
+                Book Title: ${bookTitle}
+                Price: $${bookPrice.toFixed(2)}
+                Discount: $${discountAmount.toFixed(2)}
+                Total Price: $${totalPrice.toFixed(2)}
+                Discount Code: ${discountCode}
+                Payment Proof: ${paymentProofUrl ? paymentProofUrl : 'No proof uploaded'}
+            `;
+
+            const telegramBotToken = '6457415810:AAEIWy76tjfslXmStkEcth_K_Hy4_Fyp7JM';
+            const chatId = '@soagsisnsjs'; // User channel ID
+
+            fetch(`https://api.telegram.org/bot${telegramBotToken}/sendMessage`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    chat_id: chatId,
+                    text: message
+                })
+            }).then(response => response.json())
+            .then(data => {
+                if (data.ok) {
+                    alert('Payment request sent successfully!');
+                    // Reset the form after submission
+                    document.getElementById('payment-form').reset();
+                    document.getElementById('upload-section').style.display = 'none'; // Hide upload section
+                } else {
+                    console.error('Error sending message:', data.description);
+                    alert('Failed to send payment request.');
+                }
+            }).catch(error => {
+                console.error('Error sending message:', error);
+                alert('Failed to send payment request.');
+            });
         }
     </script>
-
 </body>
 </html>
