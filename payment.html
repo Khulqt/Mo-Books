@@ -107,7 +107,7 @@
 
     <div class="container">
         <h1>Payment</h1>
-        <form action="generate_receipt.html" method="POST" enctype="multipart/form-data">
+        <form id="payment-form">
             <label for="name">Full Name</label>
             <input type="text" id="name" name="name" required>
 
@@ -137,7 +137,7 @@
                 <input type="file" id="payment-proof" name="payment-proof" accept="image/*">
             </div>
 
-            <button type="submit">Pay Now</button>
+            <button type="button" onclick="generateReceipt()">Pay Now</button>
         </form>
     </div>
 
@@ -154,11 +154,7 @@
         // Toggle upload section for e-wallet payment
         function toggleUploadSection(show) {
             const uploadSection = document.getElementById('upload-section');
-            if (show) {
-                uploadSection.style.display = 'block';
-            } else {
-                uploadSection.style.display = 'none';
-            }
+            uploadSection.style.display = show ? 'block' : 'none';
         }
 
         // Apply discount code functionality
@@ -176,6 +172,41 @@
             document.getElementById('discount-amount').textContent = `$${discount.toFixed(2)}`;
             document.getElementById('total-price').textContent = `$${discountedPrice.toFixed(2)}`;
         });
+
+        // Function to generate receipt and download as PDF
+        function generateReceipt() {
+            const name = document.getElementById('name').value;
+            const address = document.getElementById('address').value;
+            const phone = document.getElementById('phone').value;
+            const discountCode = document.getElementById('discount-code').value;
+
+            const discountAmount = parseFloat(document.getElementById('discount-amount').textContent.replace('$', ''));
+            const totalPrice = parseFloat(document.getElementById('total-price').textContent.replace('$', ''));
+
+            // Create the PDF content
+            const pdfContent = `
+                <h1>Receipt</h1>
+                <p><strong>Name:</strong> ${name}</p>
+                <p><strong>Address:</strong> ${address}</p>
+                <p><strong>Phone:</strong> ${phone}</p>
+                <p><strong>Book Title:</strong> ${bookTitle}</p>
+                <p><strong>Price:</strong> ${bookPrice.toFixed(2)}</p>
+                <p><strong>Discount:</strong> ${discountAmount.toFixed(2)}</p>
+                <p><strong>Total Price:</strong> ${totalPrice.toFixed(2)}</p>
+                <p><strong>Discount Code:</strong> ${discountCode}</p>
+            `;
+
+            // Create a blob for PDF download
+            const blob = new Blob([pdfContent], { type: 'application/pdf' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'receipt.pdf';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
     </script>
 
 </body>
