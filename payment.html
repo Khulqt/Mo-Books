@@ -1,14 +1,15 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Payment</title>
+    <title>الدفع</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script> <!-- إضافة مكتبة jsPDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Cairo', sans-serif;
             background-color: #f0f8ff;
             margin: 0;
             padding: 20px;
@@ -25,7 +26,7 @@
 
         h1 {
             text-align: center;
-            color: #2c3e50;
+            color: #3498db; /* لون العنوان الأزرق */
         }
 
         label {
@@ -41,6 +42,7 @@
             margin-top: 5px;
             border-radius: 5px;
             border: 1px solid #ddd;
+            font-family: 'Cairo', sans-serif; /* تطبيق الخط على الحقول */
         }
 
         .book-summary {
@@ -91,6 +93,7 @@
             font-size: 18px;
             cursor: pointer;
             margin-top: 20px;
+            font-family: 'Cairo', sans-serif; /* تطبيق الخط على الزر */
         }
 
         button:hover {
@@ -107,38 +110,38 @@
 <body>
 
     <div class="container">
-        <h1>Payment</h1>
+        <h1>الدفع</h1>
         <form id="payment-form">
-            <label for="name">Full Name</label>
+            <label for="name">الاسم الكامل</label>
             <input type="text" id="name" name="name" required>
 
-            <label for="address">Address</label>
+            <label for="address">العنوان</label>
             <input type="text" id="address" name="address" required>
 
-            <label for="phone">Phone Number (WhatsApp)</label>
+            <label for="phone">رقم الهاتف (واتساب)</label>
             <input type="text" id="phone" name="phone" required>
 
             <div class="book-summary">
-                <p>Book: <span id="book-title"></span></p>
-                <p>Price: <span id="book-price"></span></p>
-                <p>Discount: <span id="discount-amount">$0.00</span></p>
-                <p class="total-price">Total Price: <span id="total-price"></span></p>
+                <p>اسم الكتاب: <span id="book-title"></span></p>
+                <p>السعر: <span id="book-price"></span> جنيهاً</p>
+                <p>الخصم: <span id="discount-amount">0.00 جنيهاً</span></p>
+                <p class="total-price">السعر الإجمالي: <span id="total-price"></span> جنيهاً</p>
             </div>
 
-            <label for="discount-code">Discount Code</label>
-            <input type="text" id="discount-code" name="discount-code" class="discount-code" placeholder="Enter discount code">
+            <label for="discount-code">كود الخصم</label>
+            <input type="text" id="discount-code" name="discount-code" class="discount-code" placeholder="أدخل كود الخصم">
 
             <div class="payment-options">
-                <label><input type="radio" name="payment-method" value="wallet" onclick="toggleUploadSection(true)" required> Pay via e-wallet (01009160625)</label>
-                <label><input type="radio" name="payment-method" value="cod" onclick="toggleUploadSection(false)" required> Cash on Delivery</label>
+                <label><input type="radio" name="payment-method" value="wallet" onclick="toggleUploadSection(true)" required> الدفع عبر المحفظة (01009160625)</label>
+                <label><input type="radio" name="payment-method" value="cod" onclick="toggleUploadSection(false)" required> الدفع عند الاستلام</label>
             </div>
 
             <div class="upload-section" id="upload-section">
-                <label for="payment-proof">Upload Payment Proof</label>
+                <label for="payment-proof">رفع إثبات الدفع</label>
                 <input type="file" id="payment-proof" name="payment-proof" accept="image/*">
             </div>
 
-            <button type="button" onclick="generateReceipt()">Pay Now</button>
+            <button type="button" onclick="generateReceipt()">دفع الآن</button>
         </form>
     </div>
 
@@ -149,8 +152,8 @@
         const bookPrice = parseFloat(urlParams.get('price'));
 
         document.getElementById('book-title').textContent = bookTitle;
-        document.getElementById('book-price').textContent = `$${bookPrice.toFixed(2)}`;
-        document.getElementById('total-price').textContent = `$${bookPrice.toFixed(2)}`;
+        document.getElementById('book-price').textContent = `${bookPrice.toFixed(2)}`;
+        document.getElementById('total-price').textContent = `${bookPrice.toFixed(2)}`;
 
         // Toggle upload section for e-wallet payment
         function toggleUploadSection(show) {
@@ -170,116 +173,74 @@
             }
 
             const discountedPrice = bookPrice - discount;
-            document.getElementById('discount-amount').textContent = `$${discount.toFixed(2)}`;
-            document.getElementById('total-price').textContent = `$${discountedPrice.toFixed(2)}`;
+            document.getElementById('discount-amount').textContent = `${discount.toFixed(2)} جنيهاً`;
+            document.getElementById('total-price').textContent = `${discountedPrice.toFixed(2)} جنيهاً`;
         });
 
-        // Function to generate receipt, send to Telegram, and download as PDF
+        // Function to generate receipt and download as PDF
         function generateReceipt() {
             const name = document.getElementById('name').value;
             const address = document.getElementById('address').value;
             const phone = document.getElementById('phone').value;
             const discountCode = document.getElementById('discount-code').value;
 
-            const discountAmount = parseFloat(document.getElementById('discount-amount').textContent.replace('$', ''));
-            const totalPrice = parseFloat(document.getElementById('total-price').textContent.replace('$', ''));
+            const discountAmount = parseFloat(document.getElementById('discount-amount').textContent.replace(' جنيهاً', ''));
+            const totalPrice = parseFloat(document.getElementById('total-price').textContent.replace(' جنيهاً', ''));
 
             // Create PDF using jsPDF
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
 
             doc.setFontSize(20);
-            doc.text('Receipt', 20, 20);
+            doc.text('فاتورة', 20, 20);
             doc.setFontSize(12);
-            doc.text(`Name: ${name}`, 20, 30);
-            doc.text(`Address: ${address}`, 20, 40);
-            doc.text(`Phone: ${phone}`, 20, 50);
-            doc.text(`Book Title: ${bookTitle}`, 20, 60);
-            doc.text(`Price: $${bookPrice.toFixed(2)}`, 20, 70);
-            doc.text(`Discount: $${discountAmount.toFixed(2)}`, 20, 80);
-            doc.text(`Total Price: $${totalPrice.toFixed(2)}`, 20, 90);
-            doc.text(`Discount Code: ${discountCode}`, 20, 100);
+            doc.text(`الاسم: ${name}`, 20, 30);
+            doc.text(`العنوان: ${address}`, 20, 40);
+            doc.text(`الهاتف: ${phone}`, 20, 50);
+            doc.text(`اسم الكتاب: ${bookTitle}`, 20, 60);
+            doc.text(`السعر: ${bookPrice.toFixed(2)} جنيهاً`, 20, 70);
+            doc.text(`الخصم: ${discountAmount.toFixed(2)} جنيهاً`, 20, 80);
+            doc.text(`السعر الإجمالي: ${totalPrice.toFixed(2)} جنيهاً`, 20, 90);
+            doc.text(`كود الخصم: ${discountCode}`, 20, 100);
 
             // Save the PDF
-            const pdfFileName = 'receipt.pdf';
-            doc.save(pdfFileName);
+            doc.save('فاتورة.pdf');
 
-            // Prepare data for Telegram
-            const telegramBotToken = '6457415810:AAEIWy76tjfslXmStkEcth_K_Hy4_Fyp7JM';
-            const chatId = '@soagsisnsjs'; // User channel ID
-            const paymentProofInput = document.getElementById('payment-proof');
-            let paymentProofUrl = '';
-
-            // Check if a payment proof image is uploaded
-            if (paymentProofInput.files.length > 0) {
-                const file = paymentProofInput.files[0];
-                const formData = new FormData();
-                formData.append('chat_id', chatId);
-                formData.append('document', file);
-
-                // Upload payment proof to Telegram
-                fetch(`https://api.telegram.org/bot${telegramBotToken}/sendDocument`, {
-                    method: 'POST',
-                    body: formData
-                }).then(response => response.json())
-                .then(data => {
-                    if (data.ok) {
-                        paymentProofUrl = data.result.document.file_id; // Get file ID to include in the message
-                        sendMessage(name, address, phone, discountCode, discountAmount, totalPrice, paymentProofUrl);
-                    } else {
-                        console.error('Error uploading payment proof:', data.description);
-                        sendMessage(name, address, phone, discountCode, discountAmount, totalPrice);
-                    }
-                }).catch(error => {
-                    console.error('Error uploading payment proof:', error);
-                    sendMessage(name, address, phone, discountCode, discountAmount, totalPrice);
-                });
-            } else {
-                sendMessage(name, address, phone, discountCode, discountAmount, totalPrice);
-            }
-        }
-
-        // Function to send message to Telegram
-        function sendMessage(name, address, phone, discountCode, discountAmount, totalPrice, paymentProofUrl = '') {
+            // Send message to Telegram
+            const chatId = '@soagsisnsjs'; // replace with your channel username
             const message = `
-                New Payment Request:
-                Name: ${name}
-                Address: ${address}
-                Phone: ${phone}
-                Book Title: ${bookTitle}
-                Price: $${bookPrice.toFixed(2)}
-                Discount: $${discountAmount.toFixed(2)}
-                Total Price: $${totalPrice.toFixed(2)}
-                Discount Code: ${discountCode}
-                Payment Proof: ${paymentProofUrl ? paymentProofUrl : 'No proof uploaded'}
+                طلب دفع جديد:
+                الاسم: ${name}
+                العنوان: ${address}
+                الهاتف: ${phone}
+                اسم الكتاب: ${bookTitle}
+                السعر: ${bookPrice.toFixed(2)}
+                الخصم: ${discountAmount.toFixed(2)}
+                السعر الإجمالي: ${totalPrice.toFixed(2)} 
+                كود الخصم: ${discountCode}
             `;
 
-            const telegramBotToken = '6457415810:AAEIWy76tjfslXmStkEcth_K_Hy4_Fyp7JM';
-            const chatId = '@soagsisnsjs'; // User channel ID
-
-            fetch(`https://api.telegram.org/bot${telegramBotToken}/sendMessage`, {
+            fetch(`https://api.telegram.org/bot6457415810:AAEIWy76tjfslXmStkEcth_K_Hy4_Fyp7JM/sendMessage`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
                     chat_id: chatId,
-                    text: message
+                    text: message,
+                    parse_mode: 'HTML'
                 })
-            }).then(response => response.json())
-            .then(data => {
-                if (data.ok) {
-                    alert('Payment request sent successfully!');
-                    // Reset the form after submission
-                    document.getElementById('payment-form').reset();
-                    document.getElementById('upload-section').style.display = 'none'; // Hide upload section
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('تم إرسال الطلب بنجاح!');
                 } else {
-                    console.error('Error sending message:', data.description);
-                    alert('Failed to send payment request.');
+                    alert('حدث خطأ أثناء إرسال الطلب.');
                 }
-            }).catch(error => {
-                console.error('Error sending message:', error);
-                alert('Failed to send payment request.');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('حدث خطأ أثناء إرسال الطلب.');
             });
         }
     </script>
