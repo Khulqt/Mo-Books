@@ -29,6 +29,43 @@
             font-weight: 600;
         }
 
+        /* إعدادات السلايد */
+        .carousel {
+            position: relative;
+            width: 100%; /* تأكد من أن العرض هو 100% */
+            margin: auto;
+            overflow: hidden; /* إخفاء أجزاء السلايد الزائدة */
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            margin-bottom: 20px; /* المسافة بين السلايد والعنوان */
+        }
+
+        .slides {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+        }
+
+        .slide {
+            min-width: 100vw; /* استخدام عرض نافذة المتصفح */
+            box-sizing: border-box;
+        }
+
+        .slide img {
+            width: 100%;
+            height: auto; /* تأكد من الحفاظ على نسبة العرض إلى الارتفاع */
+            border-radius: 10px;
+        }
+
+        .note {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: bold;
+        }
+
         .book-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -98,22 +135,23 @@
                 grid-template-columns: 1fr;
             }
         }
-        
-        .note {
-            background-color: #f8d7da;
-            color: #721c24;
-            padding: 15px;
-            margin-top: 20px;
-            border-radius: 5px;
-            text-align: center;
-            font-weight: bold;
-        }
     </style>
 </head>
 <body>
 
     <div class="container">
         <h1>الكتب المتاحة</h1>
+
+        <!-- قسم السلايد -->
+        <div class="carousel">
+            <div class="slides">
+                <div class="slide"><img src="slide1.jpg" alt="سلايد 1"></div>
+                <div class="slide"><img src="slide2.jpg" alt="سلايد 2"></div>
+                <div class="slide"><img src="slide3.jpg" alt="سلايد 3"></div>
+                <div class="slide"><img src="slide4.jpg" alt="سلايد 4"></div>
+            </div>
+        </div>
+
         <div class="book-grid">
 
             <!-- كتاب 1 -->
@@ -142,14 +180,35 @@
                 <div class="book-stock">عدد النسخ المتاحة: 8</div>
                 <a href="payment.html?title=عنوان+الكتاب+3&price=120" class="buy-button"><i class="fas fa-shopping-cart"></i> اشترى الآن</a>
             </div>
+            
             <div class="note">
-            سوف يتم إضافة المزيد من الكتب قريباً...⏳
-        </div>
+                سوف يتم إضافة المزيد من الكتب قريباً...⏳
+            </div>
 
             <!-- أضف المزيد من الكتب حسب الحاجة -->
 
         </div>
     </div>
+
+    <script>
+        let currentIndex = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+
+        function showSlide(index) {
+            const slidesContainer = document.querySelector('.slides');
+            slidesContainer.style.transform = `translateX(-${index * 100}%)`;
+        }
+
+        function nextSlide() {
+            currentIndex = (currentIndex + 1) % totalSlides;
+            showSlide(currentIndex);
+        }
+
+        // بداية عرض السلايدات
+        showSlide(currentIndex);
+        setInterval(nextSlide, 2000); // تغيير السلايد كل ثانيتين
+    </script>
 
 </body>
 </html>
