@@ -1,16 +1,18 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Available Books</title>
+    <title>الكتب المتاحة</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Cairo', sans-serif; /* استخدم خط جميل */
             background-color: #f0f8ff;
             margin: 0;
             padding: 20px;
+            text-align: center; /* محاذاة النص إلى اليمين */
         }
 
         .container {
@@ -19,9 +21,8 @@
         }
 
         h1 {
-            text-align: center;
             color: #2c3e50;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
         }
 
         .book-grid {
@@ -37,6 +38,8 @@
             padding: 15px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             transition: transform 0.2s;
+            position: relative;
+            overflow: hidden;
         }
 
         .book-card:hover {
@@ -55,82 +58,168 @@
             font-weight: bold;
             color: #34495e;
             margin-bottom: 5px;
+            text-align: center;
         }
 
         .book-price {
             font-size: 16px;
             color: #27ae60;
             margin-bottom: 5px;
+            text-align: center;
         }
 
         .book-stock {
             font-size: 14px;
             color: #e74c3c;
+            text-align: center;
+            margin-bottom: 15px;
         }
 
-        .buy-button {
-            display: block;
-            width: 93%;
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            gap: 10px;
+            text-align: center;
+        }
+
+        .buy-button, .select-button {
             background-color: #3498db;
             color: white;
-            text-align: center;
-            padding: 10px;
-            margin-top: 10px;
             border: none;
             border-radius: 8px;
             cursor: pointer;
+            padding: 8px;
             font-size: 16px;
-            text-decoration: none;
+            width: 80%;
+            transition: background-color 0.3s;
+            
         }
 
-        .buy-button:hover {
+        .buy-button:hover, .select-button:hover {
             background-color: #2980b9;
+        }
+
+        #checkout {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            text-align: center;
+            display: none;
+            width: calc(100% - 40px);
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            font-family: 'Cairo', sans-serif;
         }
 
         @media (max-width: 600px) {
             .book-grid {
                 grid-template-columns: 1fr;
             }
+
+            #checkout {
+                width: calc(100% - 30px);
+            }
+        }
+        
+        .note {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h1>Available Books</h1>
-        <div class="book-grid">
+        <h1>الكتب المتاحة</h1>
+        <form id="bookForm">
+            <div class="book-grid">
+                <!-- Book 1 -->
+                <div class="book-card">
+                    <img src="https://i.ibb.co/yyZXSNs/work-in-progress.png" alt="الكتاب 1" class="book-image">
+                    <div class="book-title">عنوان الكتاب 1</div>
+                    <div class="book-price">100 EGP</div>
+                    <div class="book-stock">عدد النسخ المتاحة: 5</div>
+                    <div class="button-container">
+                        <input type="checkbox" name="books" value="عنوان الكتاب 1|20.00" class="select-button"> 
+                        <span>اختر</span>
+                        <a href="payment.html?title=عنوان+الكتاب+1&price=20.00" class="buy-button"><i class="fas fa-shopping-cart"></i> شراء الآن</a>
+                    </div>
+                </div>
 
-            <!-- Book 1 -->
-            <div class="book-card">
-                <img src="https://i.ibb.co/yyZXSNs/work-in-progress.png" alt="Book 1" class="book-image">
-                <div class="book-title">Book Title 1</div>
-                <div class="book-price">$20.00</div>
-                <div class="book-stock">Available copies: 5</div>
-                <a href="payment.html?title=Book+Title+1&price=20.00" class="buy-button"><i class="fas fa-shopping-cart"></i> Buy Now</a>
+                <!-- Book 2 -->
+                <div class="book-card">
+                    <img src="https://i.ibb.co/yyZXSNs/work-in-progress.png" alt="الكتاب 2" class="book-image">
+                    <div class="book-title">عنوان الكتاب 2</div>
+                    <div class="book-price">150 EGP</div>
+                    <div class="book-stock">عدد النسخ المتاحة: 2</div>
+                    <div class="button-container">
+                        <input type="checkbox" name="books" value="عنوان الكتاب 2|15.00" class="select-button"> 
+                        <span>اختر</span>
+                        <a href="payment.html?title=عنوان+الكتاب+2&price=15.00" class="buy-button"><i class="fas fa-shopping-cart"></i> شراء الآن</a>
+                    </div>
+                </div>
+
+                <!-- Book 3 -->
+                <div class="book-card">
+                    <img src="https://i.ibb.co/yyZXSNs/work-in-progress.png" alt="الكتاب 3" class="book-image">
+                    <div class="book-title">عنوان الكتاب 3</div>
+                    <div class="book-price">100 EGP</div>
+                    <div class="book-stock">عدد النسخ المتاحة: 8</div>
+                    <div class="button-container">
+                        <input type="checkbox" name="books" value="عنوان الكتاب 3|12.00" class="select-button"> 
+                        <span>اختر</span>
+                        <a href="payment.html?title=عنوان+الكتاب+3&price=100" class="buy-button"><i class="fas fa-shopping-cart"></i> شراء الآن</a>
+                    </div>
+                </div>
+
+                <!-- Add more books as needed -->
             </div>
+        </form>
 
-            <!-- Book 2 -->
-            <div class="book-card">
-                <img src="https://i.ibb.co/yyZXSNs/work-in-progress.png" alt="Book 2" class="book-image">
-                <div class="book-title">Book Title 2</div>
-                <div class="book-price">$15.00</div>
-                <div class="book-stock">Available copies: 2</div>
-                <a href="payment.html?title=Book+Title+2&price=15.00" class="buy-button"><i class="fas fa-shopping-cart"></i> Buy Now</a>
-            </div>
-
-            <!-- Book 3 -->
-            <div class="book-card">
-                <img src="https://i.ibb.co/yyZXSNs/work-in-progress.png" alt="Book 3" class="book-image">
-                <div class="book-title">Book Title 3</div>
-                <div class="book-price">$12.00</div>
-                <div class="book-stock">Available copies: 8</div>
-                <a href="payment.html?title=Book+Title+3&price=12.00" class="buy-button"><i class="fas fa-shopping-cart"></i> Buy Now</a>
-            </div>
-
-            <!-- Add more books as needed -->
-
-        </div>
+        <button type="button" id="checkout">المتابعة إلى الدفع</button>
     </div>
+     <div class="note">
+            ⏳...سوف يتم إضافة المزيد من الكتب قريباً
+        </div>
+
+    <script>
+        const checkoutButton = document.getElementById('checkout');
+        const checkboxes = document.querySelectorAll('input[name="books"]');
+
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                // Show or hide checkout button based on selected checkboxes
+                const selectedBooks = Array.from(checkboxes).some(checkbox => checkbox.checked);
+                checkoutButton.style.display = selectedBooks ? 'block' : 'none';
+            });
+        });
+
+        checkoutButton.addEventListener('click', function() {
+            const selectedBooks = Array.from(checkboxes).filter(checkbox => checkbox.checked);
+            const booksData = selectedBooks.map(book => book.value).join(',');
+
+            if (booksData) {
+                // Redirect to payment page with selected books
+                window.location.href = `payment.html?books=${encodeURIComponent(booksData)}`;
+            } else {
+                alert('يرجى تحديد كتاب واحد على الأقل للدفع.');
+            }
+        });
+    </script>
 
 </body>
 </html>
