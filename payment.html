@@ -6,7 +6,6 @@
     <title>الدفع</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
     <style>
         body {
             font-family: 'Cairo', sans-serif;
@@ -26,7 +25,7 @@
 
         h1 {
             text-align: center;
-            color: #3498db; /* لون العنوان الأزرق */
+            color: #3498db;
         }
 
         label {
@@ -42,7 +41,7 @@
             margin-top: 5px;
             border-radius: 5px;
             border: 1px solid #ddd;
-            font-family: 'Cairo', sans-serif; /* تطبيق الخط على الحقول */
+            font-family: 'Cairo', sans-serif;
         }
 
         .book-summary {
@@ -93,11 +92,31 @@
             font-size: 18px;
             cursor: pointer;
             margin-top: 20px;
-            font-family: 'Cairo', sans-serif; /* تطبيق الخط على الزر */
+            font-family: 'Cairo', sans-serif;
         }
 
         button:hover {
             background-color: #2980b9;
+        }
+
+        .note {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .additional-note {
+            display: none;
+            margin-top: 10px;
+            background-color: #d1ecf1;
+            color: #0c5460;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
         }
 
         @media (max-width: 600px) {
@@ -111,6 +130,9 @@
 
     <div class="container">
         <h1>الدفع</h1>
+        <div class="note">
+            قم بتقديم طلبك للشراء وانتظر رسالة من المطور عبر الواتساب
+        </div>
         <form id="payment-form">
             <label for="name">الاسم الكامل</label>
             <input type="text" id="name" name="name" required>
@@ -132,8 +154,12 @@
             <input type="text" id="discount-code" name="discount-code" class="discount-code" placeholder="أدخل كود الخصم">
 
             <div class="payment-options">
-                <label><input type="radio" name="payment-method" value="wallet" onclick="toggleUploadSection(true)" required> الدفع عبر المحفظة (01009160625)</label>
-                <label><input type="radio" name="payment-method" value="cod" onclick="toggleUploadSection(false)" required> الدفع عند الاستلام</label>
+                <label><input type="radio" name="payment-method" value="wallet" onclick="toggleUploadSection(true); showAdditionalNote();" required> الدفع عبر المحفظة (01009160625)</label>
+                <label><input type="radio" name="payment-method" value="cod" onclick="toggleUploadSection(false); hideAdditionalNote();" required> الدفع عند الاستلام</label>
+            </div>
+
+            <div class="additional-note" id="additional-note">
+                قم بإرسال المبلغ إلى الرقم المحدد على فودافون كاش وقم بأخذ لقطة شاشة لتحويل المبلغ وارفعها على الموقع كما هو موضح فوق زر الدفع.
             </div>
 
             <div class="upload-section" id="upload-section">
@@ -141,8 +167,9 @@
                 <input type="file" id="payment-proof" name="payment-proof" accept="image/*">
             </div>
 
-            <button type="button" onclick="generateReceipt()">دفع الآن</button>
+            <button type="button" onclick="sendPaymentRequest()">دفع الآن</button>
         </form>
+        
     </div>
 
     <script>
@@ -161,6 +188,16 @@
             uploadSection.style.display = show ? 'block' : 'none';
         }
 
+        // Show additional note when paying via wallet
+        function showAdditionalNote() {
+            document.getElementById('additional-note').style.display = 'block';
+        }
+
+        // Hide additional note when paying via cash on delivery
+        function hideAdditionalNote() {
+            document.getElementById('additional-note').style.display = 'none';
+        }
+
         // Apply discount code functionality
         document.getElementById('discount-code').addEventListener('input', function() {
             const discountCode = this.value.trim();
@@ -177,8 +214,8 @@
             document.getElementById('total-price').textContent = `${discountedPrice.toFixed(2)} جنيهاً`;
         });
 
-        // Function to generate receipt and download as PDF
-        function generateReceipt() {
+        // Function to send payment request to Telegram
+        function sendPaymentRequest() {
             const name = document.getElementById('name').value;
             const address = document.getElementById('address').value;
             const phone = document.getElementById('phone').value;
@@ -187,60 +224,33 @@
             const discountAmount = parseFloat(document.getElementById('discount-amount').textContent.replace(' جنيهاً', ''));
             const totalPrice = parseFloat(document.getElementById('total-price').textContent.replace(' جنيهاً', ''));
 
-            // Create PDF using jsPDF
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
+            const chatId = '@soagsisnsjs'; // استبدل بمعرف القناة الخاصة بك
+            const token = '6457415810:AAEIWy76tjfslXmStkEcth_K_Hy4_Fyp7JM'; // استبدل بتوكن البوت الخاص بك
+            const message = `طلب دفع جديد:\nالاسم: ${name}\nالعنوان: ${address}\nالهاتف: ${phone}\nاسم الكتاب: ${bookTitle}\nالسعر: ${bookPrice.toFixed(2)} جنيهاً\nالخصم: ${discountAmount.toFixed(2)} جنيهاً\nالسعر الإجمالي: ${totalPrice.toFixed(2)} جنيهاً\nكود الخصم: ${discountCode}`;
 
-            doc.setFontSize(20);
-            doc.text('فاتورة', 20, 20);
-            doc.setFontSize(12);
-            doc.text(`الاسم: ${name}`, 20, 30);
-            doc.text(`العنوان: ${address}`, 20, 40);
-            doc.text(`الهاتف: ${phone}`, 20, 50);
-            doc.text(`اسم الكتاب: ${bookTitle}`, 20, 60);
-            doc.text(`السعر: ${bookPrice.toFixed(2)} جنيهاً`, 20, 70);
-            doc.text(`الخصم: ${discountAmount.toFixed(2)} جنيهاً`, 20, 80);
-            doc.text(`السعر الإجمالي: ${totalPrice.toFixed(2)} جنيهاً`, 20, 90);
-            doc.text(`كود الخصم: ${discountCode}`, 20, 100);
-
-            // Save the PDF
-            doc.save('فاتورة.pdf');
-
-            // Send message to Telegram
-            const chatId = '@soagsisnsjs'; // replace with your channel username
-            const message = `
-                طلب دفع جديد:
-                الاسم: ${name}
-                العنوان: ${address}
-                الهاتف: ${phone}
-                اسم الكتاب: ${bookTitle}
-                السعر: ${bookPrice.toFixed(2)}
-                الخصم: ${discountAmount.toFixed(2)}
-                السعر الإجمالي: ${totalPrice.toFixed(2)} 
-                كود الخصم: ${discountCode}
-            `;
-
-            fetch(`https://api.telegram.org/bot6457415810:AAEIWy76tjfslXmStkEcth_K_Hy4_Fyp7JM/sendMessage`, {
+            // استخدام Fetch API لإرسال الرسالة إلى تلغرام
+            fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
                     chat_id: chatId,
-                    text: message,
-                    parse_mode: 'HTML'
+                    text: message
                 })
             })
-            .then(response => {
-                if (response.ok) {
-                    alert('تم إرسال الطلب بنجاح!');
+            .then(response => response.json())
+            .then(data => {
+                if (data.ok) {
+                    alert('تم إرسال طلب الدفع بنجاح!');
+                    // يمكنك إضافة كود لتحويل المستخدم إلى صفحة أخرى إذا كنت تريد
                 } else {
-                    alert('حدث خطأ أثناء إرسال الطلب.');
+                    alert('حدث خطأ أثناء إرسال الطلب. حاول مرة أخرى.');
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('حدث خطأ أثناء إرسال الطلب.');
+                alert('حدث خطأ أثناء إرسال الطلب. حاول مرة أخرى.');
             });
         }
     </script>
