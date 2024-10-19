@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الكتب المجانية</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600&family=Tajawal:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #f0f8ff;
+            margin: 0;
+            padding: 20px;
+            direction: rtl;
+            text-align: right;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-family: 'Tajawal', sans-serif;
+            font-weight: 600;
+        }
+
+        .book-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .book-card {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+        }
+
+        .book-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .book-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .book-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #34495e;
+            margin-bottom: 5px;
+        }
+
+        .download-button {
+            display: block;
+            width: 100%;
+            background-color: #3498db;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            text-decoration: none;
+            transition: background-color 0.3s, transform 0.2s;
+            font-family: 'Cairo', sans-serif
+        }
+
+        .download-button:hover {
+            background-color: #2980b9;
+        }
+
+        /* شريط التحميل */
+        .progress {
+            display: none; /* مخفي في البداية */
+            height: 10px;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0;
+            background-color: #4caf50;
+            transition: width 2s; /* مدة التحميل */
+        }
+
+        /* iframe style */
+        .book-view {
+            display: none; /* مخفي في البداية */
+            margin-top: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            height: 500px; /* ارتفاع iframe */
+            width: 100%;
+        }
+
+        @media (max-width: 600px) {
+            .book-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>الكتب المجانية</h1>
+
+        <div class="book-grid">
+
+            <!-- كتاب 1 -->
+            <div class="book-card">
+                <img src="https://i.ibb.co/yyZXSNs/work-in-progress.png" alt="الكتاب 1" class="book-image">
+                <div class="book-title">عنوان الكتاب 1</div>
+                <button class="download-button" onclick="downloadBook('book1.pdf', this)">تحميل الكتاب</button>
+                <div class="progress">
+                    <div class="progress-bar" id="progress1"></div>
+                </div>
+                <iframe class="book-view" id="book1-view" src=""></iframe>
+            </div>
+
+            <!-- كتاب 2 -->
+            <div class="book-card">
+                <img src="https://i.ibb.co/yyZXSNs/work-in-progress.png" alt="الكتاب 2" class="book-image">
+                <div class="book-title">عنوان الكتاب 2</div>
+                <button class="download-button" onclick="downloadBook('book2.pdf', this)">تحميل الكتاب</button>
+                <div class="progress">
+                    <div class="progress-bar" id="progress2"></div>
+                </div>
+                <iframe class="book-view" id="book2-view" src=""></iframe>
+            </div>
+
+            <!-- كتاب 3 -->
+            <div class="book-card">
+                <img src="https://i.ibb.co/yyZXSNs/work-in-progress.png" alt="الكتاب 3" class="book-image">
+                <div class="book-title">عنوان الكتاب 3</div>
+                <button class="download-button" onclick="downloadBook('book3.pdf', this)">تحميل الكتاب</button>
+                <div class="progress">
+                    <div class="progress-bar" id="progress3"></div>
+                </div>
+                <iframe class="book-view" id="book3-view" src=""></iframe>
+            </div>
+
+            <!-- أضف المزيد من الكتب حسب الحاجة -->
+
+        </div>
+    </div>
+
+    <script>
+        function downloadBook(file, button) {
+            const progressContainer = button.nextElementSibling; // شريط التحميل
+            const progressBar = progressContainer.querySelector('.progress-bar'); // شريط التقدم
+            const bookView = button.nextElementSibling.nextElementSibling; // iframe للكتاب
+
+            // إظهار شريط التحميل
+            progressContainer.style.display = 'block'; // إظهار شريط التحميل
+            progressBar.style.width = '0%'; // إعادة تعيين الشريط
+
+            // محاكاة عملية التحميل
+            let width = 0;
+            const interval = setInterval(() => {
+                if (width >= 100) {
+                    clearInterval(interval); // إنهاء المحاكاة
+                    button.textContent = 'فتح الكتاب'; // تغيير نص الزر
+                    button.onclick = function() {
+                        openBook(file, bookView); // فتح الكتاب
+                    };
+                } else {
+                    width++;
+                    progressBar.style.width = width + '%'; // تحديث عرض شريط التحميل
+                }
+            }, 50); // تغيير الوقت حسب الحاجة
+        }
+
+        function openBook(file, iframe) {
+            iframe.src = file; // تعيين مصدر iframe
+            iframe.style.display = 'block'; // إظهار iframe
+        }
+    </script>
+</body>
+</html>
