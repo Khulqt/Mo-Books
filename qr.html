@@ -172,6 +172,17 @@
             background-color: #0056b3;
         }
 
+             .note {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 10px;
+            margin-top: 20px;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
         canvas {
             margin-top: 20px;
             border: 1px solid #ccc;
@@ -246,7 +257,10 @@
             </div>
             <button type="button" onclick="generateQRCode()">إنشاء QR Code</button>
         </form>
-
+  <!-- ملاحظة للزوار -->
+            <div class="note">
+                قم بالضغط على صورة qr code لتحميلها ✅
+            </div>
         <canvas id="qrCanvas" onclick="downloadQRCode()"></canvas>
     </div>
 
